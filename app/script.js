@@ -20,7 +20,7 @@ const App = () => {
 
 	// START TIMER
 	const startTimer = () => {
-		setTime(5);
+		setTime(1200);
 		setStatus('work');
 
 		setTimer(
@@ -33,11 +33,12 @@ const App = () => {
 	useEffect(() => {
 		if (time === 0) {
 			if (status === 'work') {
+				playBell();
 				setStatus('rest');
-				setTime(3);
+				setTime(20);
 			} else {
 				setStatus('work');
-				setTime(5);
+				setTime(1200);
 			}
 		}
 	}, [time]);
@@ -47,6 +48,17 @@ const App = () => {
 		clearInterval(timer);
 		setTime(null);
 		setStatus('off');
+	};
+
+	// CLOSE APP
+	const closeApp = () => {
+		window.close();
+	};
+
+	// PLAY SOUND
+	const playBell = () => {
+		const sound = new Audio('./sounds/bell.wav');
+		sound.play();
 	};
 
 	return (
@@ -81,7 +93,9 @@ const App = () => {
 					Start
 				</button>
 			)}
-			<button className="btn btn-close">X</button>
+			<button className="btn btn-close" onClick={closeApp}>
+				X
+			</button>
 		</div>
 	);
 };
