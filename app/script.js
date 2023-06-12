@@ -1,11 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { render } from 'react-dom';
 
 const App = () => {
-	const [status, setStatus] = useState('rest');
-	const [time, setTime] = useState(1200);
+	const [status, setStatus] = useState('off');
+	const [time, setTime] = useState(null);
 	const [timer, setTimer] = useState(null);
 
+	// FORMAT TIME
 	const formatTime = (time) => {
 		const m = Math.floor(time / 60);
 		const s = time % 60;
@@ -16,6 +17,37 @@ const App = () => {
 	};
 
 	const formatTimeMemoized = useMemo(() => formatTime(time), [time]);
+
+	// START TIMER
+	const startTimer = () => {
+		setTime(5);
+		setStatus('work');
+
+		setTimer(
+			setInterval(() => {
+				setTime((time) => time - 1);
+			}, 1000)
+		);
+	};
+
+	useEffect(() => {
+		if (time === 0) {
+			if (status === 'work') {
+				setStatus('rest');
+				setTime(3);
+			} else {
+				setStatus('work');
+				setTime(5);
+			}
+		}
+	}, [time]);
+
+	// STOP TIMER
+	const stopTimer = () => {
+		clearInterval(timer);
+		setTime(null);
+		setStatus('off');
+	};
 
 	return (
 		<div>
@@ -38,11 +70,17 @@ const App = () => {
 			{status === 'rest' && <img src="./images/rest.png" alt="Rest" />}
 			{status !== 'off' && (
 				<div>
-					<div className="timer">{formatTimeMemoized(time)}</div>
-					<button className="btn">Stop</button>
+					<div className="timer">{formatTimeMemoized}</div>
+					<button className="btn" onClick={stopTimer}>
+						Stop
+					</button>
 				</div>
 			)}
-			{status === 'off' && <button className="btn">Start</button>}
+			{status === 'off' && (
+				<button className="btn" onClick={startTimer}>
+					Start
+				</button>
+			)}
 			<button className="btn btn-close">X</button>
 		</div>
 	);
